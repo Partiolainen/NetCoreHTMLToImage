@@ -5,12 +5,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="wkhtmltoimage.exe" />
-  </ItemGroup>
-
-  <ItemGroup>
     <EmbeddedResource Include="wkhtmltoimage.exe">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <IncludeInPackage>true</IncludeInPackage>
     </EmbeddedResource>
   </ItemGroup>
 
