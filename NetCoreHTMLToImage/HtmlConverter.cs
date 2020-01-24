@@ -16,10 +16,12 @@ namespace NetCoreHTMLToImage
 
         static HtmlConverter()
         {
-	        var toolFilename = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "wkhtmltoimage.exe" : "wkhtmltoimage";
+	        var toolFilename = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "wkhtmltoimage.exe" : "/usr/local/bin/wkhtmltoimage";
 
 			directory = AppContext.BaseDirectory;
-            toolFilepath = Path.Combine(directory, toolFilename);
+			toolFilepath = RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
+				? Path.Combine(directory, toolFilename)
+				: toolFilename;
 
             if (!File.Exists(toolFilepath))
             {
@@ -65,14 +67,16 @@ namespace NetCoreHTMLToImage
             var imageFormat = format.ToString().ToLower();
             var filename = Path.Combine(directory, $"{Guid.NewGuid().ToString()}.{imageFormat}");
 
-            Process process = Process.Start(new ProcessStartInfo(toolFilepath, $"--quality {quality} --width {width} -f {imageFormat} \"{url}\" \"{filename}\"")
+            var processStartInfo = new ProcessStartInfo(toolFilepath, $"--quality {quality} --width {width} -f {imageFormat} \"{url}\" \"{filename}\"")
             {
-                WindowStyle = ProcessWindowStyle.Hidden,
-                CreateNoWindow = true,
-                UseShellExecute = false,
-                WorkingDirectory = directory,
-                RedirectStandardError = true
-            });
+	            WindowStyle = ProcessWindowStyle.Hidden,
+	            CreateNoWindow = true,
+	            UseShellExecute = false,
+	            WorkingDirectory = directory,
+	            RedirectStandardError = true
+            };
+			
+			var process = Process.Start(processStartInfo);
 
             if (process != null)
             {
