@@ -11,16 +11,12 @@ namespace NetCoreHTMLToImage
     /// </summary>
     public class HtmlConverter
     {
-	    private static readonly string directory;
-        private static readonly string toolFilepath;
+	    private readonly string directory;
+        private readonly string toolFilepath;
 
-        static HtmlConverter()
+        public HtmlConverter(string LibPath = null)
         {
-	        var linuxPath = File.Exists("/usr/bin/wkhtmltoimage")
-		        ? "/usr/bin/wkhtmltoimage"
-		        : "/usr/local/bin/wkhtmltoimage";
-
-			var toolFilename = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "wkhtmltoimage.exe" : linuxPath;
+	        var toolFilename = string.IsNullOrEmpty(LibPath) ? (RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "wkhtmltoimage.exe" : "/usr/local/bin/wkhtmltoimage") : LibPath;
 
 			directory = AppContext.BaseDirectory;
 			toolFilepath = RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
