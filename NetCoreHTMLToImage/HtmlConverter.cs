@@ -37,37 +37,39 @@ namespace NetCoreHTMLToImage
             }
         }
 
-        /// <summary>
-        /// Converts HTML string to image
-        /// </summary>
-        /// <param name="html">HTML string</param>
-        /// <param name="width">Output document width</param>
-        /// <param name="format">Output image format</param>
-        /// <param name="quality">Output image quality 1-100</param>
-        /// <returns></returns>
-        public byte[] FromHtmlString(string html, int width = 1024, ImageFormat format = ImageFormat.Jpg, int quality = 100)
+		/// <summary>
+		/// Converts HTML string to image
+		/// </summary>
+		/// <param name="html">HTML string</param>
+		/// <param name="width">Output document width</param>
+		/// <param name="format">Output image format</param>
+		/// <param name="quality">Output image quality 1-100</param>
+		/// <param name="customFlags">Custom flags for wkhtmltoimage lib</param>
+		/// <returns></returns>
+		public byte[] FromHtmlString(string html, int width = 1024, ImageFormat format = ImageFormat.Jpg, int quality = 100, string customFlags = null)
         {
             var filename = Path.Combine(directory, $"{Guid.NewGuid()}.html");
             File.WriteAllText(filename, html);
-            var bytes = FromUrl(filename, width, format, quality);
+            var bytes = FromUrl(filename, width, format, quality, customFlags);
             File.Delete(filename);
             return bytes;
         }
 
-        /// <summary>
-        /// Converts HTML page to image
-        /// </summary>
-        /// <param name="url">Valid http(s):// URL</param>
-        /// <param name="width">Output document width</param>
-        /// <param name="format">Output image format</param>
-        /// <param name="quality">Output image quality 1-100</param>
-        /// <returns></returns>
-        public byte[] FromUrl(string url, int width = 1024, ImageFormat format = ImageFormat.Jpg, int quality = 100)
+		/// <summary>
+		/// Converts HTML page to image
+		/// </summary>
+		/// <param name="url">Valid http(s):// URL</param>
+		/// <param name="width">Output document width</param>
+		/// <param name="format">Output image format</param>
+		/// <param name="quality">Output image quality 1-100</param>
+		/// <param name="customFlags">Custom flags for wkhtmltoimage lib</param>
+		/// <returns></returns>
+		public byte[] FromUrl(string url, int width = 1024, ImageFormat format = ImageFormat.Jpg, int quality = 100, string customFlags = null)
         {
             var imageFormat = format.ToString().ToLower();
             var filename = Path.Combine(directory, $"{Guid.NewGuid().ToString()}.{imageFormat}");
 
-            var processStartInfo = new ProcessStartInfo(toolFilepath, $"--quality {quality} --width {width} -f {imageFormat} \"{url}\" \"{filename}\"")
+            var processStartInfo = new ProcessStartInfo(toolFilepath, $"--quality {quality} --width {width} -f {imageFormat} {customFlags} \"{url}\" \"{filename}\"")
             {
 	            WindowStyle = ProcessWindowStyle.Hidden,
 	            CreateNoWindow = true,

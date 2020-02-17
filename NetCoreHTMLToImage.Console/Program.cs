@@ -9,7 +9,7 @@ namespace NetCoreHTMLToImage.Console
 			var converter = new HtmlConverter();
 
 			var html = "<div><strong>Hello</strong> World!</div>";
-			var htmlBytes = converter.FromHtmlString(html);
+			var htmlBytes = converter.FromHtmlString(html, format: ImageFormat.Png, customFlags: "--encoding 'UTF-8'");
 			File.WriteAllBytes("./html.png", htmlBytes);
 
 			// From URL
