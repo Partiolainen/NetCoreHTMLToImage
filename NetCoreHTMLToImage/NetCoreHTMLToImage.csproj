@@ -8,9 +8,9 @@
     <PackageProjectUrl>https://github.com/Partiolainen/NetCoreHTMLToImage</PackageProjectUrl>
     <RepositoryUrl>https://github.com/Partiolainen/NetCoreHTMLToImage</RepositoryUrl>
     <PackageLicenseUrl></PackageLicenseUrl>
-    <AssemblyVersion>1.0.1.5</AssemblyVersion>
-    <FileVersion>1.0.1.5</FileVersion>
-    <Version>1.1.0.5</Version>
+    <AssemblyVersion>1.1.1.6</AssemblyVersion>
+    <FileVersion>1.1.1.6</FileVersion>
+    <Version>1.1.1.6</Version>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
   </PropertyGroup>
 
