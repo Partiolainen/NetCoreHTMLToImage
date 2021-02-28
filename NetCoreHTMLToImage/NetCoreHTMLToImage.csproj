@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
@@ -19,16 +19,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="wkhtmltoimage.exe">
+    <EmbeddedResource Include="wkhtmltoimage.exe">
       <IncludeInPackage>true</IncludeInPackage>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Update="ImageFormat.cs">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Compile>
+    </EmbeddedResource>
   </ItemGroup>
 
 </Project>
