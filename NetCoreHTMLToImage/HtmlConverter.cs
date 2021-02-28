@@ -23,18 +23,14 @@ namespace NetCoreHTMLToImage
 				? Path.Combine(directory, toolFilename)
 				: toolFilename;
 
-            if (!File.Exists(toolFilepath))
-            {
-                var assembly = typeof(HtmlConverter).GetTypeInfo().Assembly;
-                var type = typeof(HtmlConverter);
-                var ns = type.Namespace;
+            if (File.Exists(toolFilepath)) return;
+            var assembly = typeof(HtmlConverter).GetTypeInfo().Assembly;
+            var type = typeof(HtmlConverter);
+            var ns = type.Namespace;
 
-                using (var resourceStream = assembly.GetManifestResourceStream($"{ns}.{toolFilename}"))
-                using (var fileStream = File.OpenWrite(toolFilepath))
-                {
-	                resourceStream?.CopyTo(fileStream);
-                }
-            }
+            using var resourceStream = assembly.GetManifestResourceStream($"{ns}.{toolFilename}");
+            using var fileStream = File.OpenWrite(toolFilepath);
+            resourceStream?.CopyTo(fileStream);
         }
 
 		/// <summary>
@@ -86,17 +82,14 @@ namespace NetCoreHTMLToImage
 	            process.WaitForExit();
             }
 
-            if (File.Exists(filename))
-            {
-                var bytes = File.ReadAllBytes(filename);
-                File.Delete(filename);
-                return bytes;
-            }
+            if (!File.Exists(filename)) throw new Exception("Something went wrong. Please check input parameters");
+            var bytes = File.ReadAllBytes(filename);
+            File.Delete(filename);
+            return bytes;
 
-            throw new Exception("Something went wrong. Please check input parameters");
         }
 
-        private void Process_ErrorDataReceived(object sender, DataReceivedEventArgs e)
+        private static void Process_ErrorDataReceived(object sender, DataReceivedEventArgs e)
         {
             throw new Exception(e.Data);
         }
