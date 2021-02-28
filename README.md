@@ -36,8 +36,8 @@ This is [andrei-m-code library](https://github.com/andrei-m-code/net-core-html-t
 
 ## For Ubuntu users
 ```
-sudo wget https://builds.wkhtmltopdf.org/0.12.1.3/wkhtmltox_0.12.1.3-1~bionic_amd64.deb
-sudo dpkg -i wkhtmltox_0.12.1.3-1~bionic_amd64.deb
+sudo wget https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6-1/wkhtmltox_0.12.6-1.buster_amd64.deb
+sudo dpkg -i wkhtmltox_0.12.6-1.buster_amd64.deb
 sudo apt-get install -f
 sudo ln -s /usr/local/bin/wkhtmltopdf /usr/bin
 sudo ln -s /usr/local/bin/wkhtmltoimage /usr/bin
