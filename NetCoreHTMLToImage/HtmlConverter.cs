@@ -33,65 +33,70 @@ namespace NetCoreHTMLToImage
             resourceStream?.CopyTo(fileStream);
         }
 
-		/// <summary>
-		/// Converts HTML string to image
-		/// </summary>
-		/// <param name="html">HTML string</param>
-		/// <param name="width">Output document width</param>
-		/// <param name="format">Output image format</param>
-		/// <param name="quality">Output image quality 1-100</param>
-		/// <param name="customFlags">Custom flags for wkhtmltoimage lib</param>
-		/// <returns></returns>
-		public byte[] FromHtmlString(string html, int width = 1024, ImageFormat format = ImageFormat.Jpg, int quality = 100, string customFlags = null)
+        /// <summary>
+        /// Converts HTML string to image
+        /// </summary>
+        /// <param name="html">HTML string</param>
+        /// <param name="width">Output document width</param>
+        /// <param name="format">Output image format</param>
+        /// <param name="quality">Output image quality 1-100</param>
+        /// <param name="customFlags">Custom flags for wkhtmltoimage lib</param>
+        /// <param name="timeOut">Execution timeout</param>
+        /// <returns></returns>
+        public byte[] FromHtmlString(string html, int width = 1024, ImageFormat format = ImageFormat.Jpg, int quality = 100, string customFlags = null, int? timeOut = null)
         {
             var filename = Path.Combine(directory, $"{Guid.NewGuid()}.html");
             File.WriteAllText(filename, html);
-            var bytes = FromUrl(filename, width, format, quality, customFlags);
+            var bytes = FromUrl(filename, width, format, quality, customFlags, timeOut);
             File.Delete(filename);
             return bytes;
         }
 
-		/// <summary>
-		/// Converts HTML page to image
-		/// </summary>
-		/// <param name="url">Valid http(s):// URL</param>
-		/// <param name="width">Output document width</param>
-		/// <param name="format">Output image format</param>
-		/// <param name="quality">Output image quality 1-100</param>
-		/// <param name="customFlags">Custom flags for wkhtmltoimage lib</param>
-		/// <returns></returns>
-		public byte[] FromUrl(string url, int width = 1024, ImageFormat format = ImageFormat.Jpg, int quality = 100, string customFlags = null)
+        /// <summary>
+        /// Converts HTML page to image
+        /// </summary>
+        /// <param name="url">Valid http(s):// URL</param>
+        /// <param name="width">Output document width</param>
+        /// <param name="format">Output image format</param>
+        /// <param name="quality">Output image quality 1-100</param>
+        /// <param name="customFlags">Custom flags for wkhtmltoimage lib</param>
+        /// <param name="timeOut">Execution timeout</param>
+        /// <returns></returns>
+        public byte[] FromUrl(string url, int width = 1024, ImageFormat format = ImageFormat.Jpg, int quality = 100, string customFlags = null, int? timeOut = null)
         {
             var imageFormat = format.ToString().ToLower();
-            var filename = Path.Combine(directory, $"{Guid.NewGuid().ToString()}.{imageFormat}");
+            var filename = Path.Combine(directory, $"{Guid.NewGuid()}.{imageFormat}");
+            var arguments = $"--quality {quality} --width {width} -f {imageFormat} {customFlags} \"{url}\" \"{filename}\"";
 
-            var processStartInfo = new ProcessStartInfo(toolFilepath, $"--quality {quality} --width {width} -f {imageFormat} {customFlags} \"{url}\" \"{filename}\"")
+            try
             {
-	            WindowStyle = ProcessWindowStyle.Hidden,
-	            CreateNoWindow = true,
-	            UseShellExecute = false,
-	            WorkingDirectory = directory,
-	            RedirectStandardError = true
-            };
+                var processStartInfo = new ProcessStartInfo(toolFilepath, arguments)
+                {
+                    WindowStyle = ProcessWindowStyle.Hidden,
+                    CreateNoWindow = true,
+                    UseShellExecute = false,
+                    WorkingDirectory = directory
+                };
 			
-			var process = Process.Start(processStartInfo);
+                var process = Process.Start(processStartInfo);
 
-            if (process != null)
+                if (process != null)
+                {
+                    if (timeOut == null) process.WaitForExit();
+                    else process.WaitForExit(timeOut.Value);
+                }
+            }
+            catch (Exception e)
             {
-	            process.ErrorDataReceived += Process_ErrorDataReceived;
-	            process.WaitForExit();
+                Console.WriteLine($"Process path line: {toolFilepath} {arguments}");
+                Console.WriteLine(e);
+                throw;
             }
 
             if (!File.Exists(filename)) throw new Exception("Something went wrong. Please check input parameters");
             var bytes = File.ReadAllBytes(filename);
             File.Delete(filename);
             return bytes;
-
-        }
-
-        private static void Process_ErrorDataReceived(object sender, DataReceivedEventArgs e)
-        {
-            throw new Exception(e.Data);
         }
     }
 }
